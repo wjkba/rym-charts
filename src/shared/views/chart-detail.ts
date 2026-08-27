@@ -13,13 +13,21 @@ export function chartDetail(opts: ChartDetailOpts): string {
   return layout({
     title: chart.title,
     body: `
-      <h1>${esc(chart.title)}</h1>
+      <header class="page-header">
+        <h1>${esc(chart.title)}</h1>
+        <div class="chart-menu">
+          <button type="button" class="menu-trigger" aria-haspopup="menu" aria-expanded="false" aria-label="Chart actions">⋮</button>
+          <div class="menu-dropdown" role="menu">
+            <a role="menuitem" class="menu-item" href="/charts/${chart.id}/edit">Edit chart info</a>
+            <form class="menu-item-form" method="post" action="/charts/${chart.id}/delete" onsubmit="return confirm('Delete this chart and all its listened flags?')">
+              <button type="submit" role="menuitem" class="menu-item danger">Delete chart</button>
+            </form>
+          </div>
+        </div>
+      </header>
       <p class="meta">
         ${albums.length} albums · imported ${esc(chart.imported_at)}
         ${chart.source_url ? ` · <a href="${esc(chart.source_url)}" target="_blank" rel="noopener">source</a>` : ""}
-        · <form class="inline" method="post" action="/charts/${chart.id}/delete" onsubmit="return confirm('Delete this chart and all its listened flags?')">
-            <button type="submit" class="danger small">Delete chart</button>
-          </form>
       </p>
       <div class="progress-row">
         <div class="progress progress-listened"><div style="width:${progress.percent}%"></div></div>
@@ -47,6 +55,56 @@ export function chartDetail(opts: ChartDetailOpts): string {
               ${albums.map((a) => albumRow(chart.id, a)).join("")}
             </tbody>
           </table>`}
+
+      <script>
+      (function(){
+        if (window.__rymChartMenu) return;
+        window.__rymChartMenu = true;
+
+        function closeAll() {
+          document.querySelectorAll('.chart-menu .menu-dropdown.is-open').forEach(function (d) {
+            d.classList.remove('is-open');
+            var menu = d.closest('.chart-menu');
+            var t = menu && menu.querySelector('.menu-trigger');
+            if (t) t.setAttribute('aria-expanded', 'false');
+          });
+        }
+
+        document.addEventListener('click', function (e) {
+          var trigger = e.target.closest('.menu-trigger');
+          if (trigger) {
+            e.preventDefault();
+            e.stopPropagation();
+            var menu = trigger.closest('.chart-menu');
+            var dropdown = menu && menu.querySelector('.menu-dropdown');
+            if (!dropdown) return;
+            var wasOpen = dropdown.classList.contains('is-open');
+            closeAll();
+            if (!wasOpen) {
+              dropdown.classList.add('is-open');
+              trigger.setAttribute('aria-expanded', 'true');
+              var first = dropdown.querySelector('[role="menuitem"]');
+              if (first) first.focus();
+            }
+            return;
+          }
+
+          if (!e.target.closest('.chart-menu')) {
+            closeAll();
+          }
+        });
+
+        document.addEventListener('keydown', function (e) {
+          if (e.key !== 'Escape') return;
+          var openDropdown = document.querySelector('.chart-menu .menu-dropdown.is-open');
+          if (!openDropdown) return;
+          closeAll();
+          var menu = openDropdown.closest('.chart-menu');
+          var trigger = menu && menu.querySelector('.menu-trigger');
+          if (trigger) trigger.focus();
+        });
+      })();
+      </script>
     `,
   });
 }

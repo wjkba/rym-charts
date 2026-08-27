@@ -20,6 +20,8 @@ import {
   parseRymCsv,
   toggleListened,
   toggleStarred,
+  updateChart,
+  type AlbumRow,
   type Chart,
   type ChartProgress,
 } from "./features/charts";
@@ -27,6 +29,7 @@ import { getStats } from "./features/stats";
 import {
   albumRow,
   chartDetail,
+  chartEditForm,
   chartsList,
   starredView,
   statsView,
@@ -78,7 +81,7 @@ app.post("/charts", async (c) => {
   const filename = file.name || "chart.csv";
   const content = await file.text();
 
-  let albumRows;
+  let albumRows: AlbumRow[];
   try {
     albumRows = parseRymCsv(content);
   } catch (err) {
@@ -116,6 +119,38 @@ app.get("/charts/:id", (c) => {
   const albums = listAlbums(id);
   const progress = chartProgress(id);
   return c.html(chartDetail({ chart, albums, progress }));
+});
+
+// --- edit chart info ---
+
+app.get("/charts/:id/edit", (c) => {
+  const id = parseId(c.req.param("id"));
+  if (id === null) return c.text("invalid id", 400);
+
+  const chart = getChart(id);
+  if (!chart) return c.text("chart not found", 404);
+
+  return c.html(chartEditForm(chart));
+});
+
+app.post("/charts/:id/edit", async (c) => {
+  const id = parseId(c.req.param("id"));
+  if (id === null) return c.text("invalid id", 400);
+
+  const body = (await c.req.parseBody()) as Record<string, unknown>;
+  const titleRaw = body["title"];
+  const urlRaw = body["source_url"];
+
+  const title = typeof titleRaw === "string" ? titleRaw.trim() : "";
+  const sourceUrl =
+    typeof urlRaw === "string" && urlRaw.trim() ? urlRaw.trim() : null;
+
+  if (!title) {
+    return c.text("Chart title is required.", 400);
+  }
+
+  updateChart(id, { title, sourceUrl });
+  return c.redirect(`/charts/${id}`);
 });
 
 // --- HTMX: toggle listened ---

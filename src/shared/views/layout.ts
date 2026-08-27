@@ -176,5 +176,48 @@ function css(): string {
     }
     td.star-cell { text-align: center; width: 3rem; }
     th.star-cell { text-align: center; }
+    .page-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+    .page-header h1 { margin-bottom: 0; }
+    .chart-menu { position: relative; }
+    .menu-trigger {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 2.25rem; height: 2.25rem; padding: 0;
+      background: transparent; color: var(--muted);
+      border: 1px solid transparent; border-radius: 8px;
+      font-size: 1.25rem; line-height: 1; cursor: pointer;
+    }
+    .menu-trigger:hover { background: var(--bar-bg); color: var(--fg); }
+    .menu-dropdown {
+      position: absolute; top: calc(100% + 0.25rem); right: 0;
+      min-width: 12rem; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 0.25rem; z-index: 10;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+      opacity: 0; visibility: hidden;
+      transform: scale(0.96); transform-origin: top right;
+      transition: opacity 120ms ease, transform 120ms ease, visibility 120ms;
+    }
+    .menu-dropdown.is-open { opacity: 1; visibility: visible; transform: scale(1); }
+    .menu-item, .menu-item-form button {
+      display: block; width: 100%; text-align: left;
+      padding: 0.5rem 0.75rem; border-radius: 6px;
+      background: transparent; color: var(--fg);
+      text-decoration: none; border: none;
+      font: inherit; font-size: 0.95rem; cursor: pointer;
+    }
+    .menu-item:hover, .menu-item-form button:hover { background: var(--row-hover); }
+    .menu-item.danger, .menu-item-form button.danger { color: var(--danger); }
+    .menu-item-form { margin: 0; }
+    .form-actions { display: flex; gap: 0.75rem; margin-top: 1rem; }
+    .btn.secondary {
+      background: transparent; color: var(--fg);
+      border: 1px solid var(--border);
+    }
+    .btn.secondary:hover { background: var(--row-hover); opacity: 1; }
+    @media (prefers-color-scheme: dark) {
+      .menu-dropdown { box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .menu-dropdown { transition: none; }
+    }
   `;
 }

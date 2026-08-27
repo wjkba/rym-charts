@@ -119,6 +119,11 @@ export interface CreateChartOpts {
   source?: string;
 }
 
+export interface UpdateChartOpts {
+  title: string;
+  sourceUrl?: string | null;
+}
+
 export function createChart(opts: CreateChartOpts): Chart {
   const db = getDb();
   const stmt = db.prepare(`
@@ -139,6 +144,29 @@ export function createChart(opts: CreateChartOpts): Chart {
 export function getChart(id: number): Chart | null {
   const db = getDb();
   return db.query<Chart, [number]>("SELECT * FROM charts WHERE id = ?").get(id) ?? null;
+}
+
+export function updateChart(id: number, opts: UpdateChartOpts): Chart {
+  const db = getDb();
+  const title = opts.title.trim();
+  if (!title) {
+    throw new Error("Chart title is required");
+  }
+  const sourceUrl = typeof opts.sourceUrl === "string" && opts.sourceUrl.trim()
+    ? opts.sourceUrl.trim()
+    : null;
+
+  db.prepare("UPDATE charts SET title = ?, source_url = ? WHERE id = ?").run(
+    title,
+    sourceUrl,
+    id,
+  );
+
+  const chart = getChart(id);
+  if (!chart) {
+    throw new Error(`Chart ${id} not found after update`);
+  }
+  return chart;
 }
 
 export function listCharts(): Chart[] {
