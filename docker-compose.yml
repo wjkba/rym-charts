@@ -1,0 +1,17 @@
+services:
+  rym-charts:
+    build: .
+    image: rym-charts:local
+    ports:
+      - "7331:7331"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - PORT=7331
+      - DB_PATH=/app/data/rym-charts.db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:7331/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
