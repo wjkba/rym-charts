@@ -40,12 +40,17 @@ export function statsView(stats: Stats): string {
       <h2>Top genres</h2>
       ${stats.topGenres.length === 0
         ? `<p class="meta">No genre data yet.</p>`
-        : `<table>
-            <thead><tr><th>Genre</th><th class="num">Albums</th></tr></thead>
-            <tbody>
-              ${stats.topGenres.map((g) => `<tr><td>${esc(g.genre)}</td><td class="num">${g.count}</td></tr>`).join("")}
-            </tbody>
-          </table>`}
+        : (() => {
+            const visible = stats.topGenres.slice(0, 10);
+            const hidden = stats.topGenres.length - visible.length;
+            return `<table>
+              <thead><tr><th>Genre</th><th class="num">Albums</th></tr></thead>
+              <tbody>
+                ${visible.map((g) => `<tr><td>${esc(g.genre)}</td><td class="num">${g.count}</td></tr>`).join("")}
+                ${hidden > 0 ? `<tr><td class="meta">…and ${hidden} more</td><td></td></tr>` : ""}
+              </tbody>
+            </table>`;
+          })()}
 
       <h2>Recently listened</h2>
       ${stats.recentAlbums.length === 0

@@ -110,18 +110,9 @@ app.get("/charts/:id", (c) => {
   const chart = getChart(id);
   if (!chart) return c.text("chart not found", 404);
 
-  const decadeParam = c.req.query("decade");
-  const genreParam = c.req.query("genre");
-  const filter: { decade?: number; genre?: string } = {};
-  if (decadeParam) {
-    const d = Number(decadeParam);
-    if (Number.isFinite(d)) filter.decade = d;
-  }
-  if (genreParam) filter.genre = genreParam;
-
   const albums = listAlbums(id);
   const progress = chartProgress(id);
-  return c.html(chartDetail({ chart, albums, progress, filter }));
+  return c.html(chartDetail({ chart, albums, progress }));
 });
 
 // --- HTMX: toggle listened ---
