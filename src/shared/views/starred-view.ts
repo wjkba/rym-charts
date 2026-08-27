@@ -41,7 +41,12 @@ function starredRow(album: StarredAlbum): string {
     ? `<img class="cover" src="/cover?u=${encodeURIComponent(album.image_url)}" loading="lazy" alt="">`
     : `<div class="cover-placeholder">N/A</div>`;
 
-  return `<tr id="row-${album.id}" class="${album.listened ? "listened" : ""}">
+  // Don't carry the "listened" class onto /starred rows: the global
+  // `tbody tr.listened` rule in layout.ts applies opacity:0.55 +
+  // line-through to the title, which is the right cue on a chart
+  // (these are out of the way) but wrong here — starred albums deserve
+  // to look equally worth coming back to regardless of listen status.
+  return `<tr id="row-${album.id}">
     <td>${cover}</td>
     <td>${esc(album.artist)}</td>
     <td class="title">${nl2br(album.title)}</td>
