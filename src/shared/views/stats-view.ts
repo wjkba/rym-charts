@@ -1,5 +1,5 @@
 import { esc, layout, nl2br } from "./layout";
-import type { Stats } from "@/features/stats";
+import type { Stats } from "../../features/stats";
 
 export function statsView(stats: Stats): string {
   const overallPct = stats.totalAlbums > 0

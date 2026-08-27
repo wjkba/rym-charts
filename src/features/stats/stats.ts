@@ -1,8 +1,8 @@
 // Aggregations across all charts. Pulled out of charts/db.ts because these
 // queries scan the whole table and don't belong to any single chart.
 
-import { getDb } from "@/features/charts/db";
-import type { Album } from "@/features/charts/schema";
+import { getDb } from "../charts/db";
+import type { Album } from "../charts/schema";
 
 export interface Stats {
   totalCharts: number;

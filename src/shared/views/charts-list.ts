@@ -1,5 +1,5 @@
 import { esc, layout } from "./layout";
-import type { Chart, ChartProgress } from "@/features/charts";
+import type { Chart, ChartProgress } from "../../features/charts";
 
 export type ChartWithProgress = Chart & ChartProgress;
 

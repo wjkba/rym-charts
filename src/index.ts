@@ -2,6 +2,10 @@
 //
 // Why no router abstraction: 8 routes total, single user, single deploy target.
 // Flat top-level definitions are easier to scan than nested mounts.
+//
+// Note: no `export default app`. Bun auto-serves any default export that looks
+// like a server config; combined with the explicit Bun.serve() below that
+// would bind port 7331 twice. We control startup explicitly.
 
 import { Hono } from "hono";
 import {
@@ -16,15 +20,15 @@ import {
   toggleListened,
   type Chart,
   type ChartProgress,
-} from "@/features/charts";
-import { getStats } from "@/features/stats";
+} from "./features/charts";
+import { getStats } from "./features/stats";
 import {
   albumRow,
   chartDetail,
   chartsList,
   statsView,
   uploadForm,
-} from "@/shared/views";
+} from "./shared/views";
 
 const app = new Hono();
 
@@ -186,8 +190,6 @@ function parseId(raw: string): number | null {
   const n = Number(raw);
   return Number.isFinite(n) && n > 0 ? Math.floor(n) : null;
 }
-
-export default app;
 
 if (import.meta.main) {
   const port = Number(process.env["PORT"] ?? 7331);

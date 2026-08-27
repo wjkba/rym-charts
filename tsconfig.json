@@ -15,11 +15,7 @@
     "verbatimModuleSyntax": true,
     "forceConsistentCasingInFileNames": true,
     "types": ["bun"],
-    "lib": ["ESNext"],
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "lib": ["ESNext"]
   },
   "include": ["src/**/*", "test/**/*"]
 }

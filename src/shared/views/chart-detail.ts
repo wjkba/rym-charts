@@ -1,5 +1,5 @@
 import { esc, layout, nl2br } from "./layout";
-import type { Album, Chart, ChartProgress } from "@/features/charts";
+import type { Album, Chart, ChartProgress } from "../../features/charts";
 
 export interface ChartDetailOpts {
   chart: Chart;
