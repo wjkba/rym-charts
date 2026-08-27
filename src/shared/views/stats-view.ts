@@ -38,9 +38,9 @@ export function statsView(stats: Stats): string {
             </tbody>
           </table>`}
 
-      <h2>Top genres</h2>
+      <h2>Top genres <span class="meta">— of listened albums</span></h2>
       ${stats.topGenres.length === 0
-        ? `<p class="meta">No genre data yet.</p>`
+        ? `<p class="meta">Nothing listened yet — check off an album to populate genres.</p>`
         : (() => {
             const visible = stats.topGenres.slice(0, 10);
             const hidden = stats.topGenres.length - visible.length;

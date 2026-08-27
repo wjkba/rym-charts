@@ -36,7 +36,11 @@ export function getStats(): Stats {
   const totalStarred = Number(totals?.starred ?? 0);
 
   // Genre split is post-query because genres is a comma-separated string.
-  const genreRows = db.query<{ genres: string }, []>("SELECT genres FROM albums").all();
+  // Scoped to listened albums so the stats reflect what the user has actually
+  // engaged with, not the full chart backlog.
+  const genreRows = db
+    .query<{ genres: string }, []>("SELECT genres FROM albums WHERE listened = 1")
+    .all();
   const genreCounts = new Map<string, number>();
   for (const r of genreRows) {
     for (const g of r.genres.split(",").map((s) => s.trim()).filter(Boolean)) {
