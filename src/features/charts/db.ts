@@ -49,6 +49,9 @@ export function closeDb(): void {
 }
 
 function initSchema(db: Database): void {
+  // Step 1: tables. CREATE TABLE IF NOT EXISTS is a no-op on existing dbs,
+  // so an install upgraded from before the starred feature has the older
+  // albums schema (no starred / starred_at columns).
   db.exec(`
     CREATE TABLE IF NOT EXISTS charts (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -75,11 +78,35 @@ function initSchema(db: Database): void {
       source_url TEXT,
       listened INTEGER NOT NULL DEFAULT 0,
       listened_at TEXT,
+      starred INTEGER NOT NULL DEFAULT 0,
+      starred_at TEXT,
       UNIQUE(chart_id, artist, title)
     );
+  `);
 
+  // Step 2: idempotent column adds for installs created before the starred
+  // feature. SQLite returns "duplicate column name: starred" when the column
+  // already exists; that's the happy path on re-runs. We run this BEFORE
+  // creating indexes that reference these columns, otherwise an old db would
+  // fail with "no such column: starred" at index creation.
+  for (const stmt of [
+    "ALTER TABLE albums ADD COLUMN starred INTEGER NOT NULL DEFAULT 0",
+    "ALTER TABLE albums ADD COLUMN starred_at TEXT",
+  ]) {
+    try {
+      db.exec(stmt);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (!msg.includes("duplicate column")) throw err;
+    }
+  }
+
+  // Step 3: indexes. Safe to create now that the columns exist (or will
+  // exist after step 2 added them).
+  db.exec(`
     CREATE INDEX IF NOT EXISTS idx_albums_chart ON albums(chart_id);
     CREATE INDEX IF NOT EXISTS idx_albums_listened ON albums(listened);
+    CREATE INDEX IF NOT EXISTS idx_albums_starred ON albums(starred);
     CREATE INDEX IF NOT EXISTS idx_albums_year ON albums(release_year);
   `);
 }
@@ -200,6 +227,42 @@ export function toggleListened(chartId: number, albumId: number): Album | null {
   );
 
   return { ...existing, listened: newListened, listened_at: newListenedAt };
+}
+
+export function toggleStarred(chartId: number, albumId: number): Album | null {
+  const db = getDb();
+  const existing = db
+    .query<Album, [number, number]>(
+      "SELECT * FROM albums WHERE id = ? AND chart_id = ?",
+    )
+    .get(albumId, chartId);
+  if (!existing) return null;
+
+  const newStarred: 0 | 1 = existing.starred === 1 ? 0 : 1;
+  const newStarredAt = newStarred === 1 ? new Date().toISOString() : null;
+
+  db.prepare("UPDATE albums SET starred = ?, starred_at = ? WHERE id = ?").run(
+    newStarred,
+    newStarredAt,
+    albumId,
+  );
+
+  return { ...existing, starred: newStarred, starred_at: newStarredAt };
+}
+
+export type StarredAlbum = Album & { chart_title: string };
+
+export function listStarred(): StarredAlbum[] {
+  const db = getDb();
+  return db
+    .query<StarredAlbum, []>(
+      `SELECT albums.*, charts.title AS chart_title
+       FROM albums
+       JOIN charts ON charts.id = albums.chart_id
+       WHERE albums.starred = 1
+       ORDER BY albums.starred_at DESC, albums.id DESC`,
+    )
+    .all();
 }
 
 export function chartProgress(chartId: number): ChartProgress {

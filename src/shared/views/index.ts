@@ -6,3 +6,4 @@ export { uploadForm } from "./upload-form";
 export { chartsList, type ChartWithProgress } from "./charts-list";
 export { chartDetail, albumRow } from "./chart-detail";
 export { statsView } from "./stats-view";
+export { starredView } from "./starred-view";

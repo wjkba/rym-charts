@@ -20,6 +20,7 @@ export function layout(opts: LayoutOpts): string {
   <nav>
     <a href="/" style="font-weight:600">rym-charts</a>
     <a href="/charts/new">Upload</a>
+    <a href="/starred">Starred</a>
     <a href="/stats">Stats</a>
     <span class="spacer"></span>
     <span class="meta">single-user · self-hosted</span>
@@ -158,5 +159,22 @@ function css(): string {
     .filters { margin: 1rem 0; }
     .filters > div { margin-bottom: 0.5rem; }
     form.inline { display: inline; }
+    .star {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.1rem 0.4rem;
+      font-size: 1.2rem;
+      line-height: 1;
+      color: var(--muted);
+      border-radius: 4px;
+    }
+    .star:hover { background: var(--bar-bg); color: #f59e0b; }
+    .star.on { color: #f59e0b; }
+    @media (prefers-color-scheme: dark) {
+      .star.on { color: #fbbf24; }
+    }
+    td.star-cell { text-align: center; width: 3rem; }
+    th.star-cell { text-align: center; }
   `;
 }

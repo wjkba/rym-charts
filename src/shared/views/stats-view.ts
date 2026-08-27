@@ -15,6 +15,7 @@ export function statsView(stats: Stats): string {
         <div class="stat-card"><div class="value">${stats.totalCharts}</div><div class="label">Charts</div></div>
         <div class="stat-card"><div class="value">${stats.totalAlbums}</div><div class="label">Albums tracked</div></div>
         <div class="stat-card"><div class="value">${stats.totalListened}</div><div class="label">Listened</div></div>
+        <div class="stat-card"><div class="value">${stats.totalStarred}</div><div class="label">Starred</div></div>
         <div class="stat-card"><div class="value">${overallPct}%</div><div class="label">Completion</div></div>
       </div>
 

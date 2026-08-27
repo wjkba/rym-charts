@@ -8,6 +8,7 @@ export interface Stats {
   totalCharts: number;
   totalAlbums: number;
   totalListened: number;
+  totalStarred: number;
   topGenres: Array<{ genre: string; count: number }>;
   byDecade: Array<{ decade: number; total: number; listened: number; percent: number }>;
   recentAlbums: Array<Album & { chart_title: string }>;
@@ -18,19 +19,21 @@ export function getStats(): Stats {
 
   const totals = db
     .query<
-      { charts: number; albums: number; listened: number | null },
+      { charts: number; albums: number; listened: number | null; starred: number | null },
       []
     >(
       `SELECT
          (SELECT COUNT(*) FROM charts) AS charts,
          (SELECT COUNT(*) FROM albums) AS albums,
-         (SELECT SUM(CASE WHEN listened = 1 THEN 1 ELSE 0 END) FROM albums) AS listened`,
+         (SELECT SUM(CASE WHEN listened = 1 THEN 1 ELSE 0 END) FROM albums) AS listened,
+         (SELECT SUM(CASE WHEN starred = 1 THEN 1 ELSE 0 END) FROM albums) AS starred`,
     )
     .get();
 
   const totalCharts = Number(totals?.charts ?? 0);
   const totalAlbums = Number(totals?.albums ?? 0);
   const totalListened = Number(totals?.listened ?? 0);
+  const totalStarred = Number(totals?.starred ?? 0);
 
   // Genre split is post-query because genres is a comma-separated string.
   const genreRows = db.query<{ genres: string }, []>("SELECT genres FROM albums").all();
@@ -80,5 +83,5 @@ export function getStats(): Stats {
     )
     .all();
 
-  return { totalCharts, totalAlbums, totalListened, topGenres, byDecade, recentAlbums };
+  return { totalCharts, totalAlbums, totalListened, totalStarred, topGenres, byDecade, recentAlbums };
 }

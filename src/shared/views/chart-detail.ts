@@ -39,6 +39,7 @@ export function chartDetail(opts: ChartDetailOpts): string {
                 <th class="genres">Genre</th>
                 <th class="num">Rating</th>
                 <th class="num">Votes</th>
+                <th class="star-cell">★</th>
                 <th>Listened</th>
               </tr>
             </thead>
@@ -83,6 +84,15 @@ export function albumRow(chartId: number, album: Album): string {
     <td class="genres">${genreCell}</td>
     <td class="num">${rating}</td>
     <td class="num">${votes}</td>
+    <td class="star-cell">
+      <button class="star ${album.starred ? "on" : ""}"
+              hx-patch="/charts/${chartId}/albums/${album.id}/star"
+              hx-trigger="click"
+              hx-target="#row-${album.id}"
+              hx-swap="outerHTML"
+              title="${album.starred ? "Unstar" : "Star"}"
+              aria-label="${album.starred ? "Unstar" : "Star"}">${album.starred ? "★" : "☆"}</button>
+    </td>
     <td>
       <input type="checkbox" ${album.listened ? "checked" : ""}
              hx-patch="/charts/${chartId}/albums/${album.id}"

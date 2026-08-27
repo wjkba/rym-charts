@@ -27,6 +27,8 @@ export interface Album {
   source_url: string | null;
   listened: 0 | 1;
   listened_at: string | null;
+  starred: 0 | 1;
+  starred_at: string | null;
 }
 
 /** Album as produced by the CSV parser (no DB-assigned fields). */

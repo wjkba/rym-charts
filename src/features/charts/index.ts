@@ -13,8 +13,11 @@ export {
   addAlbums,
   listAlbums,
   toggleListened,
+  toggleStarred,
+  listStarred,
   chartProgress,
   type CreateChartOpts,
   type AddAlbumsResult,
   type DbOptions,
+  type StarredAlbum,
 } from "./db";

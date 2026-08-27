@@ -16,8 +16,10 @@ import {
   getChart,
   listAlbums,
   listCharts,
+  listStarred,
   parseRymCsv,
   toggleListened,
+  toggleStarred,
   type Chart,
   type ChartProgress,
 } from "./features/charts";
@@ -26,6 +28,7 @@ import {
   albumRow,
   chartDetail,
   chartsList,
+  starredView,
   statsView,
   uploadForm,
 } from "./shared/views";
@@ -127,6 +130,21 @@ app.patch("/charts/:id/albums/:albumId", (c) => {
   return c.html(albumRow(chartId, album));
 });
 
+// --- HTMX: toggle starred ---
+
+app.patch("/charts/:id/albums/:albumId/star", (c) => {
+  const chartId = parseId(c.req.param("id"));
+  const albumId = parseId(c.req.param("albumId"));
+  if (chartId === null || albumId === null) return c.text("invalid id", 400);
+
+  const album = toggleStarred(chartId, albumId);
+  if (!album) return c.text("album not found", 404);
+  // Return the updated chart-detail row. On /starred the button uses
+  // hx-swap="delete" so the response is discarded; on chart-detail the
+  // button uses hx-swap="outerHTML" so this replaces the row in place.
+  return c.html(albumRow(chartId, album));
+});
+
 // --- delete (POST so plain HTML forms work without JS) ---
 
 app.delete("/charts/:id", (c) => {
@@ -142,6 +160,10 @@ app.post("/charts/:id/delete", (c) => {
   deleteChart(id);
   return c.redirect("/");
 });
+
+// --- starred across all charts ---
+
+app.get("/starred", (c) => c.html(starredView(listStarred())));
 
 // --- stats ---
 
