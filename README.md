@@ -24,8 +24,8 @@ The SQLite database lives in `./data/rym-charts.db`. Stop the container with `do
 ## CSV import: install the userscript once
 
 1. Install a userscript manager: [Violentmonkey](https://violentmonkey.github.io/) (Firefox, Chrome, Edge, Safari) or [Tampermonkey](https://www.tampermonkey.net/).
-2. Install [dbeley/download-album-chart.user.js](https://github.com/dbeley/rymscraper/raw/master/userscripts/download-album-chart.user.js). (If that URL has moved, browse the [rymscraper userscripts folder](https://github.com/dbeley/rymscraper/tree/master/userscripts) for the latest file.)
-3. On any RYM chart page (e.g. `https://rateyourmusic.com/charts/top/album/1970s/l:pl/`), a "Download chart CSV" button appears near the page header. Click it. Your browser saves a file like `rym_album_charts_top_1970_1970s_l_pl_2026-08-27_09-06-06.csv`.
+2. Install [dbeley/download-album-charts.user.js](https://github.com/dbeley/rym-userscripts/raw/main/download-album-charts.user.js). (If that URL has moved, browse the [rym-userscripts repo](https://github.com/dbeley/rym-userscripts) for the latest file.)
+3. On any RYM chart page (e.g. `https://rateyourmusic.com/charts/top/album/1970s/l:pl/`), a "Download CSV" button appears near the page header. Click it. Your browser saves a file like `rym_album_charts_top_1970_1970s_l_pl_2026-08-27_09-06-06.csv`.
 4. Open `http://localhost:7331/charts/new`, fill in an optional title + source URL, pick the CSV, click **Upload**.
 5. The chart detail page opens with the full table. Check off albums as you listen to them.
 

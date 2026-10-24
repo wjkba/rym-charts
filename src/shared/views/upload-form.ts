@@ -7,7 +7,7 @@ export function uploadForm(): string {
       <h1>Upload chart CSV</h1>
       <p class="meta">
         Export a chart from rateyourmusic.com using the
-        <a href="https://github.com/dbeley/rymscraper" target="_blank" rel="noopener">dbeley userscript</a>,
+        <a href="https://github.com/dbeley/rym-userscripts/raw/main/download-album-charts.user.js" target="_blank" rel="noopener">dbeley userscript</a>,
         then upload the resulting <code>.csv</code> file here.
       </p>
       <form class="upload-form" method="post" action="/charts" enctype="multipart/form-data">
